@@ -1,7 +1,6 @@
-import requests
 import telebot
-token =''
-bot = telebot.TeleBot(token)
+
+bot = telebot.TeleBot()
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -12,22 +11,28 @@ def start(message):
     'Loading… ███████[][][] 75%'
     'Loading… ██████████] 99%'
     'Loading… ███████████ 100%')
-    bot.reply_to(message, 'Привет, я бот по исканию игр. Напиши название игры и я, наверно, помогу тебе её найти')
+    bot.reply_to(message, '🔥Привет, я бот по исканию игр на минимальной цене. Напиши название игры и я, наверно, помогу тебе найти её идеальную цену!🔥')
 
 @bot.message_handler(commands=['help'])
 def help(message):
-    bot.reply_to(message, 'Помощь. Если есть ошибки,то переустановите бота(Заблокировать или удалить чат).')
+    bot.reply_to(message, '⚠️Помощь. Если есть ошибки в командах,то переустановите бота(Заблокировать или удалить чат).⚠️')
 
 @bot.message_handler(commands=['about'])
 def about(message):
-    bot.reply_to(message, 'Информация о боте. Создан для итогового проекта и может быть не готов.')
+    bot.reply_to(message,
+    'Loading… [][][][][][][][][][] 0%'                                      
+    'Loading… █████[][][][][] 50%'
+    'Loading… ███████[][][] 75%'
+    'Loading… ██████████] 99%'
+    'Loading… ███████████ 100%')
+    bot.reply_to(message, '📃Информация о боте. Создан для итогового проекта и может быть где то не готов.📃')
 
 @bot.message_handler(content_types=['text'])
 def get_game(message):
-    user_text = message.text
+    user_text = message.text()
     url = f'https://cheapshark.com{user_text}&limit=1'
     try:
-        okak = requests.get(url).json()
+        okak = requests.get(url)
 
         if okak < 0:
             game = okak[0]
@@ -36,7 +41,7 @@ def get_game(message):
             picture = game['picture']
 
             url1 = f"https://cheapshark.com{url}"
-            data = requests.get(url1).json()
+            data = requests.get(url1)
 
             bestdeal = data['bestdeal']
             price = bestdeal['price']
@@ -48,14 +53,10 @@ def get_game(message):
                     f'💢 Цена без скидки: {retailprice}',
                     f'🔑 Ключ код для вашей покупки) : https://cheapshark.com{bestdeal['ID']})"'}
             bot.send_photo(message.chat.id, picture)
+            bot.send_document(message.chat.id, text)
 
     except Exception as e:
         bot.send_message(message.chat.id, "Произошла ошибка, может быть скидок нету.")
         print('ошибка:', e)
 
 bot.polling()
-
-
-
-
-
